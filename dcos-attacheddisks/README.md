@@ -30,8 +30,10 @@ In order to prepare the disks and register them permanently here is a quick bash
 # Reboot the machine after 1 minute
 #
 sudo mkdir -p /dcos/volume0&&sudo parted -s /dev/sdc mklabel gpt mkpart primary ext4 0% 100%&&sudo mkfs -t ext4 /dev/sdc1&&sudo mount /dev/sdc1 /dcos/volume0&&sudo sh -c "echo '/dev/sdc1\t/dcos/volume0\text4\tdefaults\t0\t2' >> /etc/fstab"&&sudo shutdown --reboot 1
+```
 Notice that the Azure documentation suggests that volumes are registered using their UUID. However doing that I have had failures with agents restarting
 In cases anyone still wants to try this is the alternate approach for the registration step becomes:
+```
 sudo sh -c "echo 'UUID=$(sudo blkid | grep '/dev/sdc1' | sed -n 's/.*UUID=\"\([^\"]*\)\".*/\1/p')\t/dcos/volume0\text4\tdefaults\t0\t2' >> /etc/fstab"
 ```
 Step 4: Once the machine rebooted, edit the DCOS configuration in order to start leveraging the new volume.
